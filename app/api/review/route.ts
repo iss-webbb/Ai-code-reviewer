@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const client = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
     const interaction = await client.interactions.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-3.1-flash-lite",
       input: `review this ${body.lang} code and give feedback: ${body.code}`,
     });
 

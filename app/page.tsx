@@ -2,23 +2,26 @@
 
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
+import ReactMarkDown from 'react-markdown';
+import remarkGfm from "remark-gfm";
+
 
 const Page = () => {
   const [code, setCode] = useState("");
   const [lang, setLang] = useState("typescript");
   const [review, setReview] = useState("");
   const [preload, setPreload] = useState(false);
+  const [err, setErr] = useState("")
 
   async function handleReview() {
-    console.log(code, lang);
     setPreload(true);
     const data = await fetch("/api/review", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, lang }),
     }).then((res) => res.json());
-    console.log(data);
     setReview(data.Message);
+    setErr(data.error)
     setPreload(false);
   }
 
@@ -60,12 +63,15 @@ const Page = () => {
       <div className="w-1/2 p-4 flex flex-col h-full">
         <h2>Code Review</h2>
         {preload ? (
-          <h4 className="flex-1 flex items-center justify-center ">
+          <h4 className="flex-1 flex items-center justify-center">
             Reviewing...
           </h4>
         ) : (
-          <p>{review}</p>
+            <div><article className="pb-5 pt-4 prose prose-sm max-w-none"><ReactMarkDown remarkPlugins={[remarkGfm]}>{review}</ReactMarkDown></article>
+          <p className="flex-1 flex items-center justify-center">{err}</p></div>
+          
         )}
+
       </div>
     </div>
   );
