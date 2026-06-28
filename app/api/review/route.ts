@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -16,7 +15,10 @@ export async function POST(request: NextRequest) {
     const client = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
     const interaction = await client.interactions.create({
       model: "gemini-3.1-flash-lite",
-      input: `review this ${body.lang} code and give feedback: ${body.code}`,
+      input: `Review this ${body.lang} code. Return ONLY a JSON array with no extra text. Each item must have:
+      - "type" : one of "bug", "performance", "style", "security"
+      - "message" : detialed feedback text
+      code: ${body.code}`,
     });
 
     return NextResponse.json(
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return NextResponse.json(
       { error: "failed to process request" },
       { status: 500 },

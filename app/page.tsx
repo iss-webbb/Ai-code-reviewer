@@ -2,15 +2,31 @@
 
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
-import ReactMarkDown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
 
 const Page = () => {
   const [code, setCode] = useState("");
   const [lang, setLang] = useState("typescript");
-  const [review, setReview] = useState("");
+  const [review, setReview] = useState<{ type: string; message: string }[]>([]);
   const [preload, setPreload] = useState(false);
   const [err, setErr] = useState("");
+  const [history, setHistory] = useState<
+    {
+      review: { type: string; message: string }[];
+      code: string;
+      lang: string;
+      timestamp: string;
+    }[]
+  >(() => {
+    const saved = localStorage.getItem("history");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const color: Record<string, string> = {
+    bug: "bg-red-500",
+    performance: "bg-yellow-500",
+    style: "bg-blue-500",
+    security: "bg-orange-500",
+  };
 
   async function handleReview() {
     setPreload(true);
@@ -19,29 +35,44 @@ const Page = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, lang }),
     }).then((res) => res.json());
-    setReview(data.Message);
+    const cleared = data.Message.replace(/```json|```/g, "").trim();
+    setReview(JSON.parse(cleared));
+    const entry = {
+      review,
+      code,
+      lang,
+      timestamp: new Date().toISOString(),
+    };
+    const updated = [...history, entry];
+    setHistory(updated);
+    localStorage.setItem("history", JSON.stringify(updated));
     setErr(data.error);
     setPreload(false);
   }
 
-  function exampleCode() {
-    setCode(`const greet = (name: string): string => \`Hello, \${name}!\`;
-    console.log(greet("joe"));`);
-  }
+  console.log(history)
 
-  const display = code === "" ? " " : review;
+  function exampleCode() {
+    setCode(`function fetchData(url) {
+  var data = []
+  for (var i = 0; i < 1000; i++) {
+    data.push(fetch(url))
+  }
+    return data
+}`);
+  }
 
   return (
     <div className="flex h-screen">
       <div className="w-1/2 p-4">
         <div className="flex items-center justify-between">
-          <h1>Code</h1>
-            <button
-              className="bg-white text-black p-1 rounded cursor-pointer"
-              onClick={exampleCode}
-            >
-              Example Code
-            </button>
+          <h1 >history</h1>
+          <button
+            className="bg-white text-black p-1 rounded cursor-pointer"
+            onClick={exampleCode}
+          >
+            Example Code
+          </button>
           <div className="flex items-center gap-2">
             <h1>Language:</h1>{" "}
             <select
@@ -85,9 +116,16 @@ const Page = () => {
         ) : (
           <div>
             <article className="pb-5 pt-4 prose prose-sm max-w-none">
-              <ReactMarkDown remarkPlugins={[remarkGfm]}>
-                {display}
-              </ReactMarkDown>
+              {review.map((item, index) => (
+                <div key={index}>
+                  <span
+                    className={`${color[item.type]} text-white px-1 p-0.5 rounded text-10 mr-2`}
+                  >
+                    {item.type}
+                  </span>
+                  <span>{item.message}</span>
+                </div>
+              ))}
             </article>
             <p className="flex-1 flex items-center justify-center">{err}</p>
           </div>
