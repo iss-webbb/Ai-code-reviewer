@@ -18,6 +18,7 @@ const Page = () => {
       timestamp: string;
     }[]
   >(() => {
+    if(typeof window === undefined) return [];
     const saved = localStorage.getItem("history");
     return saved ? JSON.parse(saved) : [];
   });
