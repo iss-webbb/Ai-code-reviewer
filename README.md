@@ -1,36 +1,155 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Code Reviewer
+
+An intelligent code review platform powered by Google's GenAI. Submit your code and receive instant, detailed reviews with actionable insights for bug detection, performance optimization, security improvements, and code style enhancements.
+
+**Live Demo:** [ai-code-reviewer-seven-red.vercel.app](https://ai-code-reviewer-seven-red.vercel.app)
+
+---
+
+## Features
+
+- **Multi-Language Support** – Review code in JavaScript, TypeScript, React, Python, Go, C, and C++
+- **Real-Time Analysis** – Get instant feedback powered by Google's Gemini AI
+- **Categorized Feedback** – Issues organized by type: bugs, performance, security, and style
+- **Code Editor** – Built-in Monaco editor with syntax highlighting
+- **Review History** – Local storage persistence for tracking previous reviews
+- **Dark Theme UI** – Optimized for extended coding sessions
+
+---
+
+## Tech Stack
+
+- **Frontend:** React 19 with Next.js 16
+- **Language:** TypeScript
+- **Editor:** Monaco Editor
+- **Styling:** Tailwind CSS 4
+- **AI:** Google GenAI SDK
+- **Deployment:** Vercel
+- **Build Tool:** Next.js with ESLint & PostCSS
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ and npm/yarn
+- Google GenAI API key
+
+### Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/iss-webbb/Ai-code-reviewer.git
+cd Ai-code-reviewer
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_GENAI_API_KEY=your_google_genai_api_key
+```
+
+### Run Locally
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
 
-## Learn More
+1. **Paste Code** – Enter or paste code in the editor window
+2. **Select Language** – Choose the programming language from the dropdown
+3. **Load Example** – Click "Example Code" to see a sample review
+4. **Submit Review** – Click "Submit" to analyze your code
+5. **View Results** – Review categorized feedback on the right panel
+6. **Track History** – All reviews are saved automatically in browser storage
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Endpoint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### POST `/api/review`
 
-## Deploy on Vercel
+Analyzes code and returns structured review feedback.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Request:**
+```json
+{
+  "code": "function example() { ... }",
+  "lang": "typescript"
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Response:**
+```json
+{
+  "Message": "[{\"type\": \"bug\", \"message\": \"...\"}, ...]",
+  "error": ""
+}
+```
+
+---
+
+## Build & Deployment
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Deploy to Vercel
+
+Push to the main branch to trigger automatic deployment:
+
+```bash
+git push origin main
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── app/
+│   ├── page.tsx           # Main application component
+│   ├── api/
+│   │   └── review/        # AI review endpoint
+│   └── layout.tsx
+├── package.json
+├── next.config.ts
+├── tsconfig.json
+├── tailwind.config.js
+└── README.md
+```
+
+---
+
+## License
+
+This project is open source and available under the MIT License.
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to submit issues and pull requests.
+
+---
+
+## Support
+
+For issues, questions, or suggestions, please open an issue on [GitHub](https://github.com/iss-webbb/Ai-code-reviewer/issues).
