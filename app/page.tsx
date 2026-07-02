@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
 
-
 const Page = () => {
   const [code, setCode] = useState("");
   const [lang, setLang] = useState("typescript");
   const [review, setReview] = useState<{ type: string; message: string }[]>([]);
   const [preload, setPreload] = useState(false);
   const [err, setErr] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<
     {
       review: { type: string; message: string }[];
@@ -18,7 +18,7 @@ const Page = () => {
       timestamp: string;
     }[]
   >(() => {
-    if(typeof window === "undefined") return [];
+    if (typeof window === "undefined") return [];
     const saved = localStorage.getItem("history");
     return saved ? JSON.parse(saved) : [];
   });
@@ -31,27 +31,30 @@ const Page = () => {
 
   async function handleReview() {
     setPreload(true);
-    const data = await fetch("/api/review", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, lang }),
-    }).then((res) => res.json());
-    const cleared = data.Message.replace(/```json|```/g, "").trim();
-    setReview(JSON.parse(cleared));
-    const entry = {
-      review,
-      code,
-      lang,
-      timestamp: new Date().toISOString(),
-    };
-    const updated = [...history, entry];
-    setHistory(updated);
-    localStorage.setItem("history", JSON.stringify(updated));
-    setErr(data.error);
-    setPreload(false);
+    try {
+      const data = await fetch("/api/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, lang }),
+      }).then((res) => res.json());
+      const cleared = data.Message.replace(/```json|```/g, "").trim();
+      const parsedReview = JSON.parse(cleared);
+      setReview(parsedReview);
+      const entry = {
+        review: parsedReview,
+        code,
+        lang,
+        timestamp: new Date().toISOString(),
+      };
+      const updated = [...history, entry];
+      setHistory(updated);
+      localStorage.setItem("history", JSON.stringify(updated));
+    } catch {
+      setErr("Something went wrong parsing the review.");
+    } finally {
+      setPreload(false);
+    }
   }
-
-  console.log(history)
 
   function exampleCode() {
     setCode(`function fetchData(url) {
@@ -67,7 +70,27 @@ const Page = () => {
     <div className="flex h-screen">
       <div className="w-1/2 p-4">
         <div className="flex items-center justify-between">
-          <h1 >history</h1>
+          <h1
+            className="cursor-pointer"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            history
+          </h1>
+
+          {showHistory && (
+            <ul className="bg-white text-black p-2 rounded mt-2">
+              {history.map((item, index) => (
+                <li key={index}>
+                  {item.code}
+                  <ul>
+                    {item.review?.map((r, i) => (
+                      <li key={i}>{r.message}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
           <button
             className="bg-white text-black p-1 rounded cursor-pointer"
             onClick={exampleCode}
