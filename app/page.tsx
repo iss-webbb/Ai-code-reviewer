@@ -76,21 +76,52 @@ const Page = () => {
           >
             history
           </h1>
-
           {showHistory && (
-            <ul className="bg-white text-black p-2 rounded mt-2">
+            <div
+              className="fixed inset-0 bg-black/50 z-40"
+              onClick={() => setShowHistory(false)}
+            />
+          )}
+
+          <div
+            className={`fixed top-0 left-0 h-full w-80 bg-white text-black p-4 z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+              showHistory ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">History</h2>
+              <button
+                onClick={() => setShowHistory(false)}
+                className="cursor-pointer"
+              >
+                X
+              </button>
+            </div>
+
+            {history.length === 0 && <p>No history yet</p>}
+
+            <ul className="space-y-3">
               {history.map((item, index) => (
-                <li key={index}>
-                  {item.code}
-                  <ul>
+                <li key={index} className="border-b pb-2">
+                  <p className="text-green-500">{item.timestamp.slice(0, 10)}</p>
+                  <p>{item.code}</p>
+                  <ul className="text-xs text-gray-600 mt-1">
                     {item.review?.map((r, i) => (
-                      <li key={i}>{r.message}</li>
+                      <div key={i} className="mt-1">
+                        <span
+                          className={`${color[r.type]} text-white px-1 p-0.5 rounded text-10`}
+                        >
+                          {r.type}
+                        </span>
+                        <span className="ml-2">{r.message}</span>
+                      </div>
                     ))}
                   </ul>
                 </li>
               ))}
             </ul>
-          )}
+          </div>
+
           <button
             className="bg-white text-black p-1 rounded cursor-pointer"
             onClick={exampleCode}
