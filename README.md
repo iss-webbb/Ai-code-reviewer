@@ -46,14 +46,6 @@ cd Ai-code-reviewer
 npm install
 ```
 
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-NEXT_PUBLIC_GENAI_API_KEY=your_google_genai_api_key
-```
-
 ### Run Locally
 
 Start the development server:
