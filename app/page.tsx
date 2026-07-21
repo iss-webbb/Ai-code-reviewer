@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-
-const Editor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
+import React, { useState } from "react";
+import Editor from "@monaco-editor/react";
 
 const Page = () => {
   const [code, setCode] = useState("");
@@ -12,8 +10,6 @@ const Page = () => {
   const [preload, setPreload] = useState(false);
   const [err, setErr] = useState("");
   const [showHistory, setShowHistory] = useState(false);
-
-  // Always start empty on both server and client to avoid hydration mismatches
   const [history, setHistory] = useState<
     {
       review: { type: string; message: string }[];
@@ -21,20 +17,11 @@ const Page = () => {
       lang: string;
       timestamp: string;
     }[]
-  >([]);
-
-  // Load saved history only after mount (client-side only)
-  useEffect(() => {
+  >(() => {
+    if (typeof window === "undefined") return [];
     const saved = localStorage.getItem("history");
-    if (saved) {
-      try {
-        setHistory(JSON.parse(saved));
-      } catch {
-        // ignore corrupted history data
-      }
-    }
-  }, []);
-
+    return saved ? JSON.parse(saved) : [];
+  });
   const color: Record<string, string> = {
     bug: "bg-red-500",
     performance: "bg-yellow-500",
@@ -44,7 +31,6 @@ const Page = () => {
 
   async function handleReview() {
     setPreload(true);
-    setErr("");
     try {
       const data = await fetch("/api/review", {
         method: "POST",
@@ -62,9 +48,7 @@ const Page = () => {
       };
       const updated = [...history, entry];
       setHistory(updated);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("history", JSON.stringify(updated));
-      }
+      localStorage.setItem("history", JSON.stringify(updated));
     } catch {
       setErr("Something went wrong parsing the review.");
     } finally {
