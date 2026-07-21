@@ -68,7 +68,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen">
-      <div className="w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto">
+      <div className="w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto order-1 lg:order-2 ">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 mb-4">
           <h1
             className="cursor-pointer text-lg sm:text-xl"
@@ -165,7 +165,7 @@ const Page = () => {
       </div>
 
       <div className="w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-300">
-        <h2 className="text-lg sm:text-xl mb-4">Code Review</h2>
+        <h2 className="order-2 lg:order-1 w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-300">Code Review</h2>
         {preload ? (
           <h4 className="flex-1 flex items-center justify-center text-sm sm:text-base">
             Reviewing...
