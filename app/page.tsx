@@ -67,11 +67,11 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen">
-      <div className="w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 mb-4">
+    <div className="flex h-screen">
+      <div className="w-1/2 p-4">
+        <div className="flex items-center justify-between">
           <h1
-            className="cursor-pointer text-lg sm:text-xl"
+            className="cursor-pointer"
             onClick={() => setShowHistory(!showHistory)}
           >
             history
@@ -84,7 +84,7 @@ const Page = () => {
           )}
 
           <div
-            className={`fixed top-0 left-0 h-full w-64 sm:w-80 bg-white text-black p-4 z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            className={`fixed top-0 left-0 h-full w-80 bg-white text-black p-4 z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
               showHistory ? "translate-x-0" : "-translate-x-full"
             }`}
           >
@@ -103,8 +103,8 @@ const Page = () => {
             <ul className="space-y-3">
               {history.map((item, index) => (
                 <li key={index} className="border-b pb-2">
-                  <p className="text-green-500 text-sm">{item.timestamp.slice(0, 10)}</p>
-                  <p className="text-xs sm:text-sm truncate">{item.code}</p>
+                  <p className="text-green-500">{item.timestamp.slice(0, 10)}</p>
+                  <p>{item.code}</p>
                   <ul className="text-xs text-gray-600 mt-1">
                     {item.review?.map((r, i) => (
                       <div key={i} className="mt-1">
@@ -113,7 +113,7 @@ const Page = () => {
                         >
                           {r.type}
                         </span>
-                        <span className="ml-2 text-xs">{r.message}</span>
+                        <span className="ml-2">{r.message}</span>
                       </div>
                     ))}
                   </ul>
@@ -123,15 +123,15 @@ const Page = () => {
           </div>
 
           <button
-            className="bg-white text-black p-1 rounded cursor-pointer text-sm sm:text-base"
+            className="bg-white text-black p-1 rounded cursor-pointer"
             onClick={exampleCode}
           >
             Example Code
           </button>
-          <div className="flex items-center gap-2 text-sm sm:text-base">
+          <div className="flex items-center gap-2">
             <h1>Language:</h1>{" "}
             <select
-              className="text-black bg-white p-1 rounded cursor-pointer text-sm"
+              className="text-black bg-white p-1 rounded cursor-pointer"
               value={lang}
               onChange={(e) => setLang(e.target.value)}
             >
@@ -145,18 +145,16 @@ const Page = () => {
             </select>
           </div>
         </div>
-        <div className="flex-1 min-h-0">
-          <Editor
-            height="100%"
-            theme="vs-dark"
-            language={lang}
-            value={code}
-            onChange={(value) => setCode(value ?? " ")}
-          />
-        </div>
-        <div className="flex justify-end mt-2 sm:mt-4">
+        <Editor
+          height="600px"
+          theme="vs-dark"
+          language={lang}
+          value={code}
+          onChange={(value) => setCode(value ?? " ")}
+        />
+        <div className="flex justify-end">
           <button
-            className="p-2 sm:p-3 cursor-pointer rounded bg-white text-black text-sm sm:text-base"
+            className="p-3 cursor-pointer rounded bg-white text-black"
             onClick={handleReview}
           >
             Submit
@@ -164,27 +162,27 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 p-2 sm:p-4 flex flex-col overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-300">
-        <h2 className="lex-1 flex items-center justify-center text-sm sm:text-base">Code Review</h2>
+      <div className="w-1/2 p-4 flex flex-col h-full">
+        <h2>Code Review</h2>
         {preload ? (
-          <h4 className="flex-1 flex items-center justify-center text-sm sm:text-base">
+          <h4 className="flex-1 flex items-center justify-center">
             Reviewing...
           </h4>
         ) : (
-          <div className="flex-1">
-            <article className="pb-5 pt-4 prose prose-sm max-w-none text-xs sm:text-sm">
+          <div>
+            <article className="pb-5 pt-4 prose prose-sm max-w-none">
               {review.map((item, index) => (
-                <div key={index} className="mb-2">
+                <div key={index}>
                   <span
-                    className={`${color[item.type]} text-white px-1 p-0.5 rounded text-10 mr-2 inline-block`}
+                    className={`${color[item.type]} text-white px-1 p-0.5 rounded text-10 mr-2`}
                   >
                     {item.type}
                   </span>
-                  <span className="break-words">{item.message}</span>
+                  <span>{item.message}</span>
                 </div>
               ))}
             </article>
-            <p className="flex-1 flex items-center justify-center text-xs sm:text-sm text-red-500">{err}</p>
+            <p className="flex-1 flex items-center justify-center">{err}</p>
           </div>
         )}
       </div>
