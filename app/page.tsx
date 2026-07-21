@@ -51,6 +51,7 @@ const Page = () => {
       localStorage.setItem("history", JSON.stringify(updated));
     } catch {
       setErr("Something went wrong parsing the review.");
+      console.log(err)
     } finally {
       setPreload(false);
     }
