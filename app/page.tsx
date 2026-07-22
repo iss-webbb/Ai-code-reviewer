@@ -50,6 +50,7 @@ const Page = () => {
       setHistory(updated);
       localStorage.setItem("history", JSON.stringify(updated));
     } catch {
+      console.error("Actual error:", error);
       setErr("Something went wrong parsing the review.");
     } finally {
       setPreload(false);
